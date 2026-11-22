@@ -191,6 +191,7 @@ export async function configYamlToContinueConfig(options: {
     },
     rules: [],
     requestOptions: { ...unrolledAssistant.requestOptions },
+    webSearch: unrolledAssistant.webSearch,
   };
 
   const config = nonNullifyConfigYaml(unrolledAssistant);

@@ -30,6 +30,7 @@ The top-level properties in the `config.yaml` configuration file are:
 - [`name`](#name) (**required**)
 - [`version`](#version) (**required**)
 - [`schema`](#schema) (**required**)
+- [`webSearch`](#websearch)
 - [`models`](#models)
 - [`context`](#context)
 - [`rules`](#rules)
@@ -59,6 +60,36 @@ The `version` property specifies the version of your project or configuration.
 ### `schema`
 
 The `schema` property specifies the schema version used for the `config.yaml`, e.g. `v1`
+
+---
+
+### `webSearch`
+
+The optional `webSearch` section selects the provider used by the built-in
+`search_web` tool and the deprecated `@Web` context provider. If omitted,
+Continue uses its existing web-search service.
+
+To use Microsoft Web.IQ:
+
+```yaml title="config.yaml"
+webSearch:
+  provider: microsoft-web-iq
+  endpoint: https://api.microsoft.ai/v3/auto
+  apiKey: ${{ secrets.WEB_IQ_API_KEY }}
+  language: en
+  region: US
+  mode: lite
+  safeSearch: strict
+  maxResponseLength: 30000
+```
+
+`endpoint` and `apiKey` are required. The optional request fields default to the
+values shown above. `maxResponseLength` must be a positive integer.
+
+Continue sends Web.IQ requests as JSON with the configured `x-apikey` header.
+The selected provider applies to each `search_web` call; Web.IQ determines the
+number of returned results from the query and response settings, so the
+`@Web` provider's `n` parameter only applies to Continue's existing provider.
 
 ---
 

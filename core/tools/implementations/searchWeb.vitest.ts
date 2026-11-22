@@ -8,6 +8,7 @@ vi.mock("../../context/providers/WebContextProvider", () => ({
 const mockExtras = {
   fetch: vi.fn() as any,
   ide: {} as any,
+  config: {},
 } as unknown as ToolExtras;
 
 import { ToolExtras } from "../..";
@@ -104,4 +105,27 @@ test("searchWeb should include all truncated results in the warning", async () =
   expect(result[3].content).toContain("Result 1");
   expect(result[3].content).toContain("Result 2");
   expect(result[3].content).not.toContain("Result 3");
+});
+
+test("searchWeb passes the configured provider to web search", async () => {
+  const webSearch = {
+    provider: "microsoft-web-iq" as const,
+    endpoint: "https://api.microsoft.ai/v3/auto",
+    apiKey: "test-key",
+    region: "EU",
+  };
+  const extras = {
+    ...mockExtras,
+    config: { webSearch },
+  } as unknown as ToolExtras;
+  (fetchSearchResults as any).mockResolvedValue([]);
+
+  await searchWebImpl({ query: "test query" }, extras);
+
+  expect(fetchSearchResults).toHaveBeenCalledWith(
+    "test query",
+    5,
+    extras.fetch,
+    webSearch,
+  );
 });

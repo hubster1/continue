@@ -3,6 +3,7 @@ import {
   ModelRole,
   PromptTemplates,
   ToolOverrideConfig,
+  WebSearchConfig,
 } from "@continuedev/config-yaml";
 import { ToolPolicy } from "@continuedev/terminal-security";
 import { McpUiResourceMeta } from "@modelcontextprotocol/ext-apps";
@@ -1838,6 +1839,7 @@ export interface ContinueConfig {
   modelsByRole: Record<ModelRole, ILLM[]>;
   selectedModelByRole: Record<ModelRole, ILLM | null>;
   data?: DataDestination[];
+  webSearch?: WebSearchConfig;
 }
 
 export interface BrowserSerializedContinueConfig {

@@ -97,6 +97,24 @@ const envRecord = z.record(
   z.union([z.string(), z.number(), z.boolean()]),
 );
 
+const microsoftWebIqSearchSchema = z.object({
+  provider: z.literal("microsoft-web-iq"),
+  endpoint: z.string().url(),
+  apiKey: z.string().min(1),
+  language: z.string().min(1).optional(),
+  region: z.string().min(1).optional(),
+  mode: z.string().min(1).optional(),
+  safeSearch: z.string().min(1).optional(),
+  maxResponseLength: z.number().int().positive().optional(),
+});
+
+export const webSearchSchema = z.discriminatedUnion("provider", [
+  z.object({ provider: z.literal("continue") }),
+  microsoftWebIqSearchSchema,
+]);
+
+export type WebSearchConfig = z.infer<typeof webSearchSchema>;
+
 export const baseConfigYamlSchema = z.object({
   name: z.string(),
   version: z.string(),
@@ -104,6 +122,7 @@ export const baseConfigYamlSchema = z.object({
   metadata: z.record(z.string()).and(commonMetadataSchema.partial()).optional(),
   env: envRecord.optional(),
   requestOptions: requestOptionsSchema.optional(),
+  webSearch: webSearchSchema.optional(),
 });
 
 const modelsUsesSchema = z

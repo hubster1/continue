@@ -7,7 +7,12 @@ const DEFAULT_WEB_SEARCH_CHAR_LIMIT = 8000;
 export const searchWebImpl: ToolImpl = async (args, extras) => {
   const query = getStringArg(args, "query");
 
-  const webResults = await fetchSearchResults(query, 5, extras.fetch);
+  const webResults = await fetchSearchResults(
+    query,
+    5,
+    extras.fetch,
+    extras.config.webSearch,
+  );
 
   // Track truncated results
   const truncatedResults: string[] = [];

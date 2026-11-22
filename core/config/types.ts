@@ -1239,6 +1239,18 @@ declare global {
     analytics?: AnalyticsConfig;
     docs?: SiteIndexingConfig[];
     tools: Tool[];
+    webSearch?: {
+      provider: "continue";
+    } | {
+      provider: "microsoft-web-iq";
+      endpoint: string;
+      apiKey: string;
+      language?: string;
+      region?: string;
+      mode?: string;
+      safeSearch?: string;
+      maxResponseLength?: number;
+    };
   }
   
   export interface BrowserSerializedContinueConfig {
