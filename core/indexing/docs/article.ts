@@ -204,7 +204,7 @@ export async function markdownPageToArticleWithChunks(
         url: page.url,
         subpath: page.path,
         article_components: [], // TODO: markdown chunker just skips this for now since not used outside, only for html chunker
-        title: chunks[0]?.otherMetadata?.title || page.path,
+        title: chunks[0]?.otherMetadata?.title || page.title || page.path,
       },
       chunks,
     };

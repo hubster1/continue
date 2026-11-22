@@ -1,7 +1,8 @@
 import { URL } from "node:url";
 
-import { ContinueConfig, IDE } from "../../..";
+import { ContinueConfig, IDE, SiteIndexingConfig } from "../../..";
 
+import { FoundryIqCrawler } from "./FoundryIqCrawler";
 import CheerioCrawler from "./CheerioCrawler";
 import { ChromiumCrawler, ChromiumInstaller } from "./ChromiumCrawler";
 import { DefaultCrawler } from "./DefaultCrawler";
@@ -11,9 +12,15 @@ export type PageData = {
   url: string;
   path: string;
   content: string;
+  title?: string;
 };
 
-export type DocsCrawlerType = "default" | "cheerio" | "chromium" | "github";
+export type DocsCrawlerType =
+  | "default"
+  | "cheerio"
+  | "chromium"
+  | "github"
+  | "foundry-iq";
 
 class DocsCrawler {
   private readonly GITHUB_HOST = "github.com";
@@ -26,6 +33,7 @@ class DocsCrawler {
     private readonly maxRequestsPerCrawl: number = 1000,
     private readonly useLocalCrawling: boolean = false,
     private readonly githubToken: string | undefined = undefined,
+    private readonly crawler?: SiteIndexingConfig["crawler"],
   ) {
     this.chromiumInstaller = new ChromiumInstaller(this.ide, this.config);
   }
@@ -43,6 +51,11 @@ class DocsCrawler {
   async *crawl(
     startUrl: URL,
   ): AsyncGenerator<PageData, DocsCrawlerType, undefined> {
+    if (this.crawler?.provider === "foundry-iq") {
+      yield* await new FoundryIqCrawler(startUrl, this.crawler).crawl();
+      return "foundry-iq";
+    }
+
     if (startUrl.host === this.GITHUB_HOST) {
       yield* new GitHubCrawler(startUrl, this.githubToken).crawl();
       return "github";
@@ -116,4 +129,10 @@ class DocsCrawler {
 }
 
 export default DocsCrawler;
-export { CheerioCrawler, ChromiumCrawler, ChromiumInstaller, GitHubCrawler };
+export {
+  FoundryIqCrawler,
+  CheerioCrawler,
+  ChromiumCrawler,
+  ChromiumInstaller,
+  GitHubCrawler,
+};

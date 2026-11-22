@@ -119,9 +119,18 @@ const docConfigsAreEqualExceptTitleAndFavicon = (
   return (
     siteConfig1.startUrl === siteConfig2.startUrl &&
     siteConfig1.maxDepth === siteConfig2.maxDepth &&
-    siteConfig1.useLocalCrawling === siteConfig2.useLocalCrawling
+    siteConfig1.useLocalCrawling === siteConfig2.useLocalCrawling &&
+    JSON.stringify(siteConfig1.crawler) === JSON.stringify(siteConfig2.crawler)
   );
 };
+
+const getDocsArticleChunker = (
+  crawler: DocsCrawlerType | undefined,
+  contentFormat: "markdown" | "html" | undefined,
+) =>
+  crawler === "github" || (crawler === "foundry-iq" && contentFormat !== "html")
+    ? markdownPageToArticleWithChunks
+    : htmlPageToArticleWithChunks;
 
 const siteIndexingConfigsAreEqual = (
   siteConfig1: SiteIndexingConfig,
@@ -436,7 +445,7 @@ export default class DocsService {
     siteIndexingConfig: SiteIndexingConfig,
     forceReindex: boolean = false,
   ): Promise<void> {
-    const { startUrl, useLocalCrawling, maxDepth, faviconUrl } =
+    const { startUrl, useLocalCrawling, maxDepth, faviconUrl, crawler } =
       siteIndexingConfig;
 
     // First, if indexing is already in process, don't attempt
@@ -550,6 +559,7 @@ export default class DocsService {
         undefined,
         useLocalCrawling,
         this.githubToken,
+        crawler,
       );
       const crawlerGen = docsCrawler.crawl(new URL(startUrl));
 
@@ -590,10 +600,10 @@ export default class DocsService {
       // Chunk pages based on which crawler was used
       const articles: ArticleWithChunks[] = [];
       const chunks: Chunk[] = [];
-      const articleChunker =
-        usedCrawler === "github"
-          ? markdownPageToArticleWithChunks
-          : htmlPageToArticleWithChunks;
+      const articleChunker = getDocsArticleChunker(
+        usedCrawler,
+        siteIndexingConfig.crawler?.contentFormat,
+      );
       for (const page of pages) {
         const articleWithChunks = await articleChunker(
           page,

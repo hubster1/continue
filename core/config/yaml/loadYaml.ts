@@ -215,6 +215,7 @@ export async function configYamlToContinueConfig(options: {
     faviconUrl: doc.faviconUrl,
     useLocalCrawling: doc.useLocalCrawling,
     sourceFile: doc.sourceFile,
+    crawler: doc.crawler,
   }));
 
   // Prompt files -

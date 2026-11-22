@@ -218,6 +218,20 @@ export const siteIndexingConfigSchema = z.object({
   faviconUrl: z.string().optional(),
   useLocalCrawling: z.boolean().optional(),
   sourceFile: z.string().optional(),
+  crawler: z
+    .object({
+      provider: z.literal("foundry-iq"),
+      endpoint: z.string().url(),
+      indexName: z.string().min(1),
+      apiKey: z.string().min(1),
+      contentField: z.string().min(1),
+      urlField: z.string().min(1),
+      titleField: z.string().min(1).optional(),
+      apiVersion: z.string().min(1).optional(),
+      maxDocuments: z.number().int().positive().optional(),
+      contentFormat: z.enum(["markdown", "html"]).optional(),
+    })
+    .optional(),
 });
 
 export const configJsonSchema = z.object({

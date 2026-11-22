@@ -320,6 +320,9 @@ List of documentation sites to index.
 - `startUrl` (**required**): Start page for crawling - usually root or intro page for docs
 - `favicon`: URL for site favicon (default is `/favicon.ico` from `startUrl`).
 - `useLocalCrawling`: Skip the default crawler and only crawl using a local crawler.
+- `crawler`: Read docs from an approved external index instead of Continue's
+  default hosted crawler. The supported `foundry-iq` provider uses a configured
+  Azure AI Search index.
 
 **Example:**
 
@@ -332,6 +335,29 @@ docs:
     startUrl: https://docs.continue.dev/intro
     favicon: https://docs.continue.dev/favicon.ico
 ```
+
+To use a pre-ingested Microsoft Foundry IQ/Azure AI Search index:
+
+```yaml title="config.yaml"
+docs:
+  - name: Product documentation
+    startUrl: https://docs.example.com
+    crawler:
+      provider: foundry-iq
+      endpoint: https://example.search.windows.net
+      indexName: product-documentation
+      apiKey: ${{ secrets.AZURE_SEARCH_QUERY_KEY }}
+      contentField: content
+      urlField: url
+      titleField: title
+      contentFormat: markdown
+      maxDocuments: 10000
+```
+
+Foundry IQ must point to an existing populated index. Continue imports its
+documents, chunks and embeds them locally, and does not fall back to the
+Continue-hosted crawler on failure. The index itself must be populated by an
+approved Azure AI Search indexer or ingestion pipeline.
 
 ---
 

@@ -250,6 +250,18 @@ export interface SiteIndexingConfig {
   faviconUrl?: string;
   useLocalCrawling?: boolean;
   sourceFile?: string;
+  crawler?: {
+    provider: "foundry-iq";
+    endpoint: string;
+    indexName: string;
+    apiKey: string;
+    contentField: string;
+    urlField: string;
+    titleField?: string;
+    apiVersion?: string;
+    maxDocuments?: number;
+    contentFormat?: "markdown" | "html";
+  };
 }
 
 export interface DocsIndexingDetails {

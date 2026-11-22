@@ -45,3 +45,28 @@ test("rejects an unknown web search provider", () => {
 
   expect(result.success).toBe(false);
 });
+
+test("accepts a Foundry IQ documentation crawler", () => {
+  const result = configYamlSchema.safeParse({
+    ...baseConfig,
+    docs: [
+      {
+        name: "Product documentation",
+        startUrl: "https://docs.example.com",
+        crawler: {
+          provider: "foundry-iq",
+          endpoint: "https://example.search.windows.net",
+          indexName: "documentation",
+          apiKey: "${{ secrets.AZURE_SEARCH_QUERY_KEY }}",
+          contentField: "content",
+          urlField: "url",
+          titleField: "title",
+          contentFormat: "markdown",
+          maxDocuments: 5000,
+        },
+      },
+    ],
+  });
+
+  expect(result.success).toBe(true);
+});
